@@ -71,6 +71,7 @@ type ImgEvent = {
 export const App = () => {
   const [styleId, setStyleId] = useState(26);
   const [segment, setSegment] = useState(true);
+  const [structureOnly, setStructureOnly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imgs, setImgs] = useState<Array<ImgEvent>>([]);
 
@@ -88,7 +89,7 @@ export const App = () => {
 
     const file_id = data.id;
     const sseSource = new EventSource(
-      `${API_URL}api/transfer?style_id=${styleId}&segment=${segment}&file_id=${file_id}`);
+      `${API_URL}api/transfer?style_id=${styleId}&segment=${segment}&file_id=${file_id}&structure_only=${structureOnly}`);
     const handler = (ev: MessageEvent) => {
       console.log(ev);
       if ((segment && ev.type == "composed") || (!segment && ev.type == "style_transfer")) {
@@ -131,6 +132,8 @@ export const App = () => {
                          }}/>
             <Switch checked={segment} label={"启用语义分割处理"} disabled={loading}
                     onChange={(ev) => setSegment(ev.currentTarget.checked)}/>
+            <Switch checked={structureOnly} label={"仅保留结构信息"} disabled={loading}
+                    onChange={(ev) => setStructureOnly(ev.currentTarget.checked)}/>
             <FilePicker disabled={loading} title={"拖放图片到此或点击上传"} subtitle={"仅可上传一个文件"}
                         onFileChange={(file) => {
                           if (file !== null) {
